@@ -7,16 +7,26 @@ class SpaceShip(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load(path)
         self.rect = self.image.get_rect(center = (x_pos,y_pos))
+        self.shield_surface = pygame.image.load("Meteor Dodger Assets/shield.png")
+        self.health = 5
 
     def update(self):
         self.rect.center = pygame.mouse.get_pos() # Gets the position of mouse
         self.screen_constrain()
+        self.display_health()
 
     def screen_constrain(self):
         if self.rect.right >= 1280:
             self.rect.right = 1280
         if self.rect.left <= 0:
             self.rect.left = 0
+
+    def display_health(self):
+        for index,shield in enumerate(range(self.health)):
+            screen.blit(self.shield_surface, (10 + index *40,10))
+
+    def get_damage(self,damage_amount):
+        self.health -= damage_amount
 
 class Meteor(pygame.sprite.Sprite):
     def __init__(self,path,x_pos,y_pos,x_speed,y_speed):
@@ -88,6 +98,12 @@ while True: # Game loop
     laser_group.update()
     spaceship_group.update()
     meteor_group.update()
+
+    if pygame.sprite.spritecollide(spaceship_group.sprite,meteor_group,True): # Detects if the sprite in spaceship_group has collided with any sprite in meteor_group, if so since the third parameter is true despawn the sprite it collided with
+        spaceship_group.sprite.get_damage(1)
+
+    for laser in laser_group:
+        pygame.sprite.spritecollide(laser,meteor_group,True)
 
     pygame.display.update() # Draw frame
     clock.tick(120) # Control the framerate
