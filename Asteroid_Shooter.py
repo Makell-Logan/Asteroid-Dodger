@@ -150,6 +150,5 @@ while True: # Game loop
     else:
         end_game()    
 
-
     pygame.display.update() # Draw frame
     clock.tick(120) # Control the framerate
